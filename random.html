@@ -1,0 +1,143 @@
+<html>
+<head>
+<script type="text/javascript">
+var $ = function(o) { return document.querySelector(o); };
+var $$ = function(o) { return document.querySelectorAll(o); };
+
+var canvas, ctx;
+window.addEventListener("load", function() {
+    canvas = $("#sc");
+    ctx = canvas.getContext("2d");
+    
+    var ox = canvas.offsetLeft;
+    var oy = canvas.offsetTop;
+    canvas.addEventListener("click", function(e) {
+        player.move(e.clientX - ox - 320, 240 - e.clientY + oy);
+    });
+    
+    init();
+    
+    setInterval(function() { update(); }, 20);
+    
+    draw();
+});
+
+var player, level;
+function init() {
+    player = new Player();
+    level = new Level();
+}
+
+function update() {
+    player.update(0.02);
+}
+
+function draw() {
+    requestAnimationFrame(draw);
+    
+    ctx.fillStyle  = "rgba(255, 255, 255, 0.1)";
+    ctx.fillRect(0, 0, 640, 480);
+    
+    ctx.save();
+    
+    ctx.translate(320, 240);
+    ctx.scale(1, -1);
+    
+    player.draw(ctx);
+    level.draw(ctx);
+    
+    ctx.restore();
+}
+
+function Player() {
+    this.position = { x : 0, y : 0 };
+    this.target = { x : 0, y : 0 };
+    this.speed = { x : 0, y : 0 };
+    this.decceleration = 0;
+    // Max speed
+    this.MAXSPEED = 500;
+    // Object radius
+    this.SIZE = 5;
+    // Movement radius
+    this.RADIUS = 50;
+    
+    this.move = function(x, y) {
+        var dx = x - this.position.x;
+        var dy = y - this.position.y;
+        
+        var l = Math.sqrt(dx * dx + dy * dy);
+        
+        if (l > this.RADIUS) {
+            dx *= this.RADIUS / l;
+            dy *= this.RADIUS / l;
+            l = this.RADIUS;
+        }
+        
+        this.target.x = this.position.x + dx;
+        this.target.y = this.position.y + dy;
+        
+        this.speed.x = dx / l * this.MAXSPEED;
+        this.speed.y = dy / l * this.MAXSPEED;
+        
+        this.decceleration = this.MAXSPEED * this.MAXSPEED / (2 * l);
+    };
+    
+    this.update = function(dt) {
+        this.position.x += this.speed.x * dt;
+        this.position.y += this.speed.y * dt;
+        
+        var l = Math.sqrt(this.speed.x * this.speed.x + this.speed.y * this.speed.y);
+        var dx = Math.abs(this.speed.x) / l * this.decceleration;
+        var dy = Math.abs(this.speed.y) / l * this.decceleration;
+        
+        if (this.speed.x < 0) {
+            this.speed.x += dx * dt;
+            if (this.speed.x > 0) {
+                this.speed.x = 0;
+            }
+        }
+        else if (this.speed.x > 0) {
+            this.speed.x -= dx * dt;
+            if (this.speed.x < 0) {
+                this.speed.x = 0;
+            }
+        }
+        
+        if (this.speed.y < 0) {
+            this.speed.y += dy * dt;
+            if (this.speed.y > 0) {
+                this.speed.y = 0;
+            }
+        }
+        else if (this.speed.y > 0) {
+            this.speed.y -= dy * dt;
+            if (this.speed.y < 0) {
+                this.speed.y = 0;
+            }
+        }
+    };
+    
+    this.draw = function(ctx) {
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, this.SIZE, 0, 2 * Math.PI);
+        ctx.fill();
+    };
+}
+
+function Level() {
+    
+    this.draw = function(ctx) {
+        
+    };
+}
+
+function 
+</script>
+</head>
+<body style="text-align: center;">
+    <br />
+    <br />
+    <canvas id="sc" width="640" height="480" style="border: 1px solid black;"></canvas>
+</body>
+</html>
