@@ -13,6 +13,7 @@ window.addEventListener("load", function() {
     var oy = canvas.offsetTop;
     canvas.addEventListener("click", function(e) {
         player.move(e.clientX - ox - 320, 240 - e.clientY + oy);
+        level.clicked();
     });
     
     init();
@@ -29,7 +30,7 @@ function init() {
 }
 
 function update() {
-    player.update(0.02);
+    player.update(.5);
 }
 
 function draw() {
@@ -49,15 +50,17 @@ function draw() {
     ctx.restore();
 }
 
+//collidable obj
 function Player() {
+    //standard dimension vars
     this.position = { x : 0, y : 0 };
+    this.dimension = {width:5, height:5};
+
     this.target = { x : 0, y : 0 };
     this.speed = { x : 0, y : 0 };
     this.decceleration = 0;
     // Max speed
-    this.MAXSPEED = 500;
-    // Object radius
-    this.SIZE = 5;
+    this.MAXSPEED = 50;
     // Movement radius
     this.RADIUS = 50;
     
@@ -120,19 +123,48 @@ function Player() {
     this.draw = function(ctx) {
         ctx.fillStyle = "red";
         ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.SIZE, 0, 2 * Math.PI);
+        ctx.arc(this.position.x, this.position.y, this.dimension.width, 0, 2 * Math.PI);
         ctx.fill();
     };
 }
 
 function Level() {
-    
+    //vars to keep track of scores
+    this.score = 0;
+    this.clicks = 0;
+    this.time = 0;
+
+    this.clicked = function(){
+        this.clicks ++;
+    };
+
     this.draw = function(ctx) {
         
     };
 }
 
-function 
+//collidable obj
+function Collectables(){
+    //standard dimension vars
+    this.position = {x:0, y:0};
+    
+    this.collected = false;
+
+    this.draw = function(ctx) {
+
+    };    
+}
+
+//static class for collision algorithms
+function Collision(){
+    this.collide = function(obj1, obj2){
+        //Returns: true if obj1 and obj2 overlap
+        //Precondition: obj1 and obj2 have invariants position(x,y) and dimension(width, height)
+
+
+    };
+}
+
 </script>
 </head>
 <body style="text-align: center;">
